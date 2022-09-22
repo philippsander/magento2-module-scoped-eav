@@ -9,9 +9,10 @@ use Magento\Eav\Api\AttributeSetRepositoryInterface;
 use Magento\Eav\Api\Data\AttributeSetInterface;
 use Magento\Eav\Api\Data\AttributeSetInterfaceFactory;
 use Magento\Eav\Model\Config;
-use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filter\FilterManager;
 use Magento\Framework\Json\Helper\Data;
@@ -20,23 +21,16 @@ use Smile\ScopedEav\Controller\Adminhtml\AbstractSet;
 
 /**
  * Scoped EAV entity attribute set admin save controller.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Save extends AbstractSet
+class Save extends AbstractSet implements HttpPostActionInterface
 {
-    /**
-     * @var FilterManager
-     */
-    private $filterManager;
+    private FilterManager $filterManager;
 
-    /**
-     * @var Data
-     */
-    private $jsonHelper;
+    private Data $jsonHelper;
 
-    /**
-     * @var JsonFactory
-     */
-    private $resultJsonFactory;
+    private JsonFactory $resultJsonFactory;
 
     /**
      * Constructor.
@@ -68,7 +62,7 @@ class Save extends AbstractSet
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function execute()
     {
@@ -78,7 +72,9 @@ class Save extends AbstractSet
         $attributeSet = $this->getAttributeSet();
 
         try {
-            $attributeSet->setAttributeSetName($this->filterManager->stripTags((string) $this->getRequest()->getParam('attribute_set_name')));
+            $attributeSet->setAttributeSetName(
+                $this->filterManager->stripTags((string) $this->getRequest()->getParam('attribute_set_name'))
+            );
 
             if ($isNewSet === false) {
                 $data = $this->jsonHelper->jsonDecode($this->getRequest()->getPost('data'));
@@ -117,15 +113,14 @@ class Save extends AbstractSet
      * Redirect user on new attribute set save.
      *
      * @param AttributeSetInterface $attributeSet Attribute set.
-     *
-     * @return ResponseInterface
      */
-    private function getNewAttributeSetResponse($attributeSet): ResponseInterface
+    private function getNewAttributeSetResponse(AttributeSetInterface $attributeSet): Redirect
     {
-        $resultRedirect = $this->_redirect('*/*/add');
+        $resultRedirect = $this->resultRedirectFactory->create();
+        $resultRedirect->setPath('*/*/add');
 
         if ($attributeSet && $attributeSet->getId()) {
-            $resultRedirect = $this->_redirect('*/*/edit', ['id' => $attributeSet->getId()]);
+            $resultRedirect->setPath('*/*/edit', ['id' => $attributeSet->getId()]);
         }
 
         return $resultRedirect;
@@ -133,8 +128,6 @@ class Save extends AbstractSet
 
     /**
      * Return formatted JSON success response.
-     *
-     * @return Json
      */
     private function getSuccessResponse(): Json
     {
@@ -145,8 +138,6 @@ class Save extends AbstractSet
 
     /**
      * Return formatted JSON error response.
-     *
-     * @return Json
      */
     private function getErrorResponse(): Json
     {

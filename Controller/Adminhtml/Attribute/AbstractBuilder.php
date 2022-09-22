@@ -9,22 +9,19 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
+use Psr\Log\LoggerInterface;
+use Smile\CustomEntity\Api\CustomEntityAttributeRepositoryInterface;
 use Smile\ScopedEav\Api\Data\AttributeInterface;
+use Smile\ScopedEav\Api\Data\AttributeInterfaceFactory;
 
 /**
  * Scoped entity attribute builder used in controllers.
  */
 abstract class AbstractBuilder implements BuilderInterface
 {
-    /**
-     * @var Config
-     */
-    private $eavConfig;
-
-    /**
-     * @var Registry
-     */
-    private $registry;
+    private Config $eavConfig;
+    private Registry $registry;
+    private LoggerInterface $logger;
 
     /**
      * Constructor.
@@ -34,14 +31,16 @@ abstract class AbstractBuilder implements BuilderInterface
      */
     public function __construct(
         Registry $registry,
-        Config $eavConfig
+        Config $eavConfig,
+        LoggerInterface $logger
     ) {
         $this->eavConfig = $eavConfig;
         $this->registry  = $registry;
+        $this->logger = $logger;
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function build(RequestInterface $request): AttributeInterface
     {
@@ -61,7 +60,8 @@ abstract class AbstractBuilder implements BuilderInterface
                     $this->getAttributeRepository()->get($attributeCode);
                     throw new AlreadyExistsException(__('An attribute with the same code already exists.'));
                 } catch (NoSuchEntityException $e) {
-                    ; // Does nothing since no other attribute exists => attribute code is valid.
+                    // Does nothing since no other attribute exists => attribute code is valid.
+                    $this->logger->critical((string) $e);
                 }
             } elseif ($attributeId != null) {
                 $attribute = $this->getAttributeRepository()->get($attributeId);
@@ -75,22 +75,16 @@ abstract class AbstractBuilder implements BuilderInterface
 
     /**
      * Entity attribute factory.
-     *
-     * @return \Smile\ScopedEav\Api\Data\AttributeInterfaceFactory
      */
     abstract protected function getAttributeFactory();
 
     /**
      * Entity attribute repository.
-     *
-     * @return mixed
      */
-    abstract protected function getAttributeRepository(): mixed;
+    abstract protected function getAttributeRepository(): CustomEntityAttributeRepositoryInterface;
 
     /**
      * Entity type code.
-     *
-     * @return string
      */
     abstract protected function getEntityTypeCode(): string;
 }

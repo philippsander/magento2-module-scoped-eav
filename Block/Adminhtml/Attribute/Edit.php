@@ -16,26 +16,9 @@ use Magento\Framework\Registry;
 class Edit extends Container
 {
     /**
-     * @var string
-     */
-    protected $_blockGroup = 'Smile_ScopedEav';
-
-    /**
-     * @var string
-     */
-    protected $_objectId   = 'attribute_id';
-
-    /**
-     * @var string
-     */
-    protected $_controller = 'adminhtml_attribute';
-
-    /**
      * Core registry
-     *
-     * @var Registry
      */
-    private $coreRegistry = null;
+    private Registry $coreRegistry;
 
     /**
      * Constructor.
@@ -54,29 +37,29 @@ class Edit extends Container
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addButton($buttonId, $data, $level = 0, $sortOrder = 0, $region = 'toolbar')
     {
         if ($this->getRequest()->getParam('popup')) {
             $region = 'header';
         }
-        parent::addButton($buttonId, $data, $level, $sortOrder, $region);
+        return parent::addButton($buttonId, $data, $level, $sortOrder, $region);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function getHeaderText(): string
+    public function getHeaderText()
     {
-        $headerText = __('New Attribute');
+        $headerText = (string) __('New Attribute');
 
         if ($this->coreRegistry->registry('entity_attribute')->getId()) {
-            $frontendLabel = $this->_coreRegistry->registry('entity_attribute')->getFrontendLabel();
+            $frontendLabel = $this->coreRegistry->registry('entity_attribute')->getFrontendLabel();
             if (is_array($frontendLabel)) {
                 $frontendLabel = $frontendLabel[0];
             }
-            $headerText = __('Edit Attribute "%1"', $this->escapeHtml($frontendLabel));
+            $headerText = (string) __('Edit Attribute "%1"', $this->escapeHtml($frontendLabel));
         }
 
         return $headerText;
@@ -84,8 +67,6 @@ class Edit extends Container
 
     /**
      * Retrieve URL for validation
-     *
-     * @return string
      */
     public function getValidationUrl(): string
     {
@@ -94,8 +75,6 @@ class Edit extends Container
 
     /**
      * Retrieve URL for save
-     *
-     * @return string
      */
     public function getSaveUrl(): string
     {
@@ -103,16 +82,15 @@ class Edit extends Container
     }
 
     /**
-     * {@inheritDoc}
-     *
+     * @inheritdoc
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _construct()
     {
         parent::_construct();
 
-        $this->buttonList->update('save', 'label', __('Save Attribute'));
-        $this->buttonList->update('delete', 'label', __('Delete Attribute'));
+        $this->buttonList->update('save', 'label', (string) __('Save Attribute'));
+        $this->buttonList->update('delete', 'label', (string) __('Delete Attribute'));
 
         $this->addButton('save_and_edit_button', [
             'label' => __('Save and Continue Edit'),

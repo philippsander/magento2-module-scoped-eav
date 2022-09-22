@@ -14,23 +14,9 @@ use Smile\ScopedEav\Api\Data\EntityInterface;
  */
 class RegistryLocator implements LocatorInterface
 {
-
-    /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
-     *
-     * @var EntityInterface
-     */
-    private $entity;
-
-    /**
-     *
-     * @var StoreInterface
-     */
-    private $store;
+    private Registry $registry;
+    private ?EntityInterface $entity = null;
+    private ?StoreInterface $store = null;
 
     /**
      * Constructor.
@@ -43,7 +29,7 @@ class RegistryLocator implements LocatorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Get entity
      *
      * @throws NotFoundException
      */
@@ -61,7 +47,7 @@ class RegistryLocator implements LocatorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Get store
      *
      * @throws NotFoundException
      */

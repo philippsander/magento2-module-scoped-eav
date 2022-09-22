@@ -6,9 +6,9 @@ namespace Smile\ScopedEav\Controller\Adminhtml\Entity\Image;
 
 use Magento\Backend\App\Action;
 use Magento\Catalog\Model\ImageUploader;
-use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\NotFoundException;
 
@@ -17,23 +17,24 @@ use Magento\Framework\Exception\NotFoundException;
  */
 class Upload extends Action implements HttpPostActionInterface
 {
-    /**
-     * @var ImageUploader
-     */
-    private $imageUploader;
+    private ImageUploader $imageUploader;
+    private JsonFactory $resultJsonFactory;
 
     /**
      * Upload constructor.
      *
-     * @param Action\Context                       $context       Context.
+     * @param Action\Context $context Context.
      * @param ImageUploader $imageUploader Image uploader.
+     * @param JsonFactory $resultJsonFactory Json factory.
      */
     public function __construct(
         Action\Context $context,
-        ImageUploader $imageUploader
+        ImageUploader $imageUploader,
+        JsonFactory $resultJsonFactory
     ) {
         parent::__construct($context);
         $this->imageUploader = $imageUploader;
+        $this->resultJsonFactory = $resultJsonFactory;
     }
 
     /**
@@ -46,10 +47,8 @@ class Upload extends Action implements HttpPostActionInterface
      */
     /**
      * Upload file controller action
-     *
-     * @return ResultInterface
      */
-    public function execute()
+    public function execute(): ResultInterface
     {
         // @todo need https://patch-diff.githubusercontent.com/raw/magento/magento2/pull/19249.patch
         $imageId = $this->_request->getParam('param_name');
@@ -59,7 +58,8 @@ class Upload extends Action implements HttpPostActionInterface
         } catch (\Exception $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
         }
-
-        return $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData($result);
+        $resultJson = $this->resultJsonFactory->create();
+        $resultJson->setData($result);
+        return $resultJson;
     }
 }

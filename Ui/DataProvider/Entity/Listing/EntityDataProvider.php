@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smile\ScopedEav\Ui\DataProvider\Entity\Listing;
 
+use Magento\Framework\Api\Filter;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 use Magento\Ui\DataProvider\AddFieldToCollectionInterface;
 use Magento\Ui\DataProvider\AddFilterToCollectionInterface;
@@ -14,16 +15,14 @@ use Magento\Ui\DataProvider\AddFilterToCollectionInterface;
 class EntityDataProvider extends AbstractDataProvider
 {
     /**
-     *
      * @var AddFieldToCollectionInterface[]
      */
-    protected $addFieldStrategies;
+    protected array $addFieldStrategies;
 
     /**
-     *
      * @var AddFilterToCollectionInterface[]
      */
-    protected $addFilterStrategies;
+    protected array $addFilterStrategies;
 
     /**
      * Constructor.
@@ -37,9 +36,9 @@ class EntityDataProvider extends AbstractDataProvider
      * @param array $data Data.
      */
     public function __construct(
-        $name,
-        $primaryFieldName,
-        $requestFieldName,
+        string $name,
+        string $primaryFieldName,
+        string $requestFieldName,
         array $addFieldStrategies = [],
         array $addFilterStrategies = [],
         array $meta = [],
@@ -52,7 +51,7 @@ class EntityDataProvider extends AbstractDataProvider
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getData()
     {
@@ -69,8 +68,7 @@ class EntityDataProvider extends AbstractDataProvider
     }
 
     /**
-     * {@inheritDoc}
-     *
+     * @inheritdoc
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
     public function addField($field, $alias = null)
@@ -83,15 +81,19 @@ class EntityDataProvider extends AbstractDataProvider
     }
 
     /**
-     * {@inheritdoc}
-     *
+     * @inheritdoc
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    public function addFilter(\Magento\Framework\Api\Filter $filter)
+    public function addFilter(Filter $filter)
     {
+        // @phpstan-ignore-next-line
         if (isset($this->addFilterStrategies[$filter->getField()])) {
             $filterStrategy = $this->addFilterStrategies[$filter->getField()];
-            $filterStrategy->addFilter($this->getCollection(), $filter->getField(), [$filter->getConditionType() => $filter->getValue()]);
+            $filterStrategy->addFilter(
+                $this->getCollection(),
+                $filter->getField(),
+                [$filter->getConditionType() => $filter->getValue()]
+            );
         } else {
             parent::addFilter($filter);
         }

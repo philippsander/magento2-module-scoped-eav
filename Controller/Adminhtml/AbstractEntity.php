@@ -6,50 +6,45 @@ namespace Smile\ScopedEav\Controller\Adminhtml;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\Phrase;
+use Magento\Framework\View\Result\LayoutFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ScopedEav\Api\Data\EntityInterface;
+use Smile\ScopedEav\Controller\Adminhtml\Entity\BuilderInterface;
 
 /**
  * Scoped EAV entity attribute set admin abstract controller.
  */
 abstract class AbstractEntity extends Action
 {
-    /**
-     * @var Entity\BuilderInterface
-     */
-    protected $entityBuilder;
-
-    /**
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
+    protected ForwardFactory $resultForwardFactory;
+    protected LayoutFactory $resultLayoutFactory;
+    protected StoreManagerInterface $storeManager;
+    protected BuilderInterface $entityBuilder;
 
     /**
      * Constructor.
-     *
-     * @param Context $context Context.
-     * @param Entity\BuilderInterface $entityBuilder Entity builder.
-     * @param StoreManagerInterface $storeManager Store manager.
      */
     public function __construct(
         Context $context,
         Entity\BuilderInterface $entityBuilder,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        ForwardFactory $resultForwardFactory,
+        LayoutFactory $resultLayoutFactory
     ) {
-        parent::__construct($context);
-
         $this->entityBuilder = $entityBuilder;
-        $this->storeManager  = $storeManager;
+        $this->storeManager = $storeManager;
+        $this->resultForwardFactory = $resultForwardFactory;
+        $this->resultLayoutFactory = $resultLayoutFactory;
+        parent::__construct($context);
     }
 
     /**
      * Create the page.
      *
      * @param Phrase|string $title Page title.
-     *
-     * @return Page
      */
     protected function createActionPage($title = null): Page
     {
@@ -66,8 +61,6 @@ abstract class AbstractEntity extends Action
 
     /**
      * Return current entity.
-     *
-     * @return EntityInterface
      */
     protected function getEntity(): EntityInterface
     {
@@ -76,8 +69,6 @@ abstract class AbstractEntity extends Action
 
     /**
      * Return current store id.
-     *
-     * @return int
      */
     protected function getStoreId(): int
     {

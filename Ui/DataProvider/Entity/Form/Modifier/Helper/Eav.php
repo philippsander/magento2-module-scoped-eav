@@ -8,6 +8,7 @@ use Magento\Catalog\Model\Attribute\ScopeOverriddenValue;
 use Magento\Eav\Api\AttributeGroupRepositoryInterface;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Api\Data\AttributeGroupInterface;
+use Magento\Eav\Model\Entity\Attribute\Group;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\Phrase;
@@ -17,53 +18,37 @@ use Smile\ScopedEav\ViewModel\Data as DataViewModel;
 
 /**
  * Scoped EAV form modifier EAV helper.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Eav
 {
-    /**
-     * @var AttributeGroupRepositoryInterface
-     */
-    private $attributeGroupRepository;
+    private AttributeGroupRepositoryInterface $attributeGroupRepository;
 
-    /**
-     * @var AttributeRepositoryInterface
-     */
-    private $attributeRepository;
+    private AttributeRepositoryInterface $attributeRepository;
 
-    /**
-     * @var SearchCriteriaBuilder $searchCriteriaBuilder
-     */
-    private $searchCriteriaBuilder;
+    private SearchCriteriaBuilder $searchCriteriaBuilder;
 
-    /**
-     * @var SortOrderBuilder $searchCriteriaBuilder
-     */
-    private $sortOrderBuilder;
+    private SortOrderBuilder $sortOrderBuilder;
 
-    /**
-     * @var DataViewModel
-     */
-    private $dataViewModel;
+    private DataViewModel $dataViewModel;
 
-    /**
-     * @var ScopeOverriddenValue
-     */
-    private $scopeOverriddenValue;
+    private ScopeOverriddenValue $scopeOverriddenValue;
 
     /**
      * @var AttributeGroupInterface[]
      */
-    private $attributeGroups = [];
+    private array $attributeGroups = [];
 
     /**
      * @var AttributeInterface[]
      */
-    private $attributes = [];
+    private array $attributes = [];
 
     /**
      * @var array
      */
-    private $canDisplayUseDefault = [];
+    private array $canDisplayUseDefault = [];
 
     /**
      * Constructor.
@@ -95,17 +80,18 @@ class Eav
      * List of attribute group by attribute set id.
      *
      * @param int|string $attributeSetId Attribute set id.
-     *
      * @return AttributeGroupInterface[]
      */
     public function getGroups($attributeSetId): array
     {
         if (!isset($this->attributeGroups[$attributeSetId])) {
+            // @phpstan-ignore-next-line
             $this->attributeGroups[$attributeSetId] = [];
             $searchCriteria = $this->prepareGroupSearchCriteria($attributeSetId)->create();
 
             $attributeGroupSearchResult = $this->attributeGroupRepository->getList($searchCriteria);
 
+            /** @var Group $group */
             foreach ($attributeGroupSearchResult->getItems() as $group) {
                 $groupCode = $group->getAttributeGroupCode();
                 $this->attributeGroups[$attributeSetId][$groupCode] = $group;
@@ -120,13 +106,15 @@ class Eav
      *
      * @param EntityInterface $entity Entity.
      * @param int|string $attributeSetId Attribute set id.
-     *
-     * @return AttributeInterface[]
+     * @return array
      */
     public function getAttributes(EntityInterface $entity, $attributeSetId): array
     {
         if (!isset($this->attributes[$attributeSetId])) {
+            // @phpstan-ignore-next-line
             $this->attributes[$attributeSetId] = [];
+
+            /** @var Group $group */
             foreach ($this->getGroups($attributeSetId) as $group) {
                 $groupCode = $group->getAttributeGroupCode();
                 $this->attributes[$attributeSetId][$groupCode] = $this->loadAttributes($entity, $group);
@@ -140,7 +128,6 @@ class Eav
      * Scope label for an attribute.
      *
      * @param AttributeInterface $attribute Attribute.
-     *
      * @return string|Phrase
      */
     public function getScopeLabel(AttributeInterface $attribute)
@@ -152,8 +139,6 @@ class Eav
      * Check if attribute is global.
      *
      * @param AttributeInterface $attribute Attribute.
-     *
-     * @return boolean
      */
     public function isScopeGlobal(AttributeInterface $attribute): bool
     {
@@ -163,22 +148,21 @@ class Eav
     /**
      * Check if the attribute value have been overriden for the current store.
      *
-     * @param EntityInterface    $entity    Entity
+     * @param EntityInterface $entity Entity
      * @param AttributeInterface $attribute Attribute.
-     * @param int                $storeId   Store id.
-     *
-     * @return boolean
+     * @param int $storeId Store id.
      */
-    public function hasValueForStore(EntityInterface $entity, AttributeInterface $attribute, $storeId): bool
+    public function hasValueForStore(EntityInterface $entity, AttributeInterface $attribute, int $storeId): bool
     {
         $hasValue = false;
         $attributeCode = $attribute->getAttributeCode();
         $interface = $this->dataViewModel->getEntityInterface($entity);
 
         try {
-            $hasValue = $hasValue || $this->scopeOverriddenValue->containsValue($interface, $entity, $attributeCode, $storeId);
+            $hasValue = $this->scopeOverriddenValue->containsValue($interface, $entity, $attributeCode, $storeId);
         } catch (\Exception $e) {
             // Catch exception hasValueForStore function
+            return false;
         }
 
         return $hasValue;
@@ -188,9 +172,7 @@ class Eav
      * Can the use default checkbox be displayed for an attribute.
      *
      * @param AttributeInterface $attribute Attribute.
-     * @param EntityInterface    $entity    Entity.
-     *
-     * @return mixed
+     * @param EntityInterface $entity Entity.
      */
     public function canDisplayUseDefault(AttributeInterface $attribute, EntityInterface $entity): mixed
     {
@@ -208,7 +190,6 @@ class Eav
      * Return form element by frontend input.
      *
      * @param string $frontendInput Frontend input.
-     *
      * @return string|NULL
      */
     public function getFormElement(string $frontendInput): ?string
@@ -220,8 +201,6 @@ class Eav
      * Prepare a search criteria that filter group by attribute set.
      *
      * @param int|string $attributeSetId Attribute set id.
-     *
-     * @return SearchCriteriaBuilder
      */
     private function prepareGroupSearchCriteria($attributeSetId): SearchCriteriaBuilder
     {
@@ -231,12 +210,11 @@ class Eav
     /**
      * Return attribute list for a group.
      *
-     * @param EntityInterface         $entity Entity.
-     * @param AttributeGroupInterface $group  Attribute group.
-     *
+     * @param EntityInterface $entity Entity.
+     * @param AttributeGroupInterface $group Attribute group.
      * @return \Magento\Eav\Api\Data\AttributeInterface[]
      */
-    private function loadAttributes(EntityInterface $entity, AttributeGroupInterface $group)
+    private function loadAttributes(EntityInterface $entity, AttributeGroupInterface $group): array
     {
         $attributes = [];
 

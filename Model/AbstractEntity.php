@@ -6,6 +6,7 @@ namespace Smile\ScopedEav\Model;
 
 use Magento\Catalog\Model\AbstractModel;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\UrlInterface;
 use Smile\ScopedEav\Api\Data\EntityInterface;
 use Smile\ScopedEav\Model\Entity\Attribute;
 
@@ -19,17 +20,10 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     /**
      * Entity Store Id
      */
-    const STORE_ID = 'store_id';
+    protected const STORE_ID = 'store_id';
 
     /**
-     * Name of object id field
-     *
-     * @var string
-     */
-    protected $_idFieldName = 'entity_id';
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAttributeSetId()
     {
@@ -37,7 +31,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCreatedAt(): string
     {
@@ -45,7 +39,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUpdatedAt(): string
     {
@@ -53,7 +47,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getName(): string
     {
@@ -61,7 +55,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getIsActive()
     {
@@ -69,7 +63,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getStoreId()
     {
@@ -81,7 +75,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDescription(): ?string
     {
@@ -89,7 +83,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getImage(): string
     {
@@ -98,16 +92,14 @@ class AbstractEntity extends AbstractModel implements EntityInterface
 
     /**
      * Retrieve default attribute set id
-     *
-     * @return int
      */
-    public function getDefaultAttributeSetId()
+    public function getDefaultAttributeSetId(): int
     {
         return $this->getResource()->getEntityType()->getDefaultAttributeSetId();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setAttributeSetId(int $attributeSetId): self
     {
@@ -115,7 +107,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setCreatedAt(string $createdAt): self
     {
@@ -123,7 +115,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setUpdatedAt(string $updatedAt): self
     {
@@ -131,7 +123,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setName(string $name): self
     {
@@ -139,7 +131,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setIsActive(bool $isActive): self
     {
@@ -147,7 +139,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setStoreId($storeId)
     {
@@ -155,7 +147,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setDescription(string $description)
     {
@@ -163,7 +155,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setImage(string $image)
     {
@@ -174,7 +166,6 @@ class AbstractEntity extends AbstractModel implements EntityInterface
      * Return image url.
      *
      * @param string $attributeCode Attribute code.
-     *
      * @return bool|string
      * @throws LocalizedException
      */
@@ -193,7 +184,7 @@ class AbstractEntity extends AbstractModel implements EntityInterface
             $isRelativeUrl = substr($image, 0, 1) === '/';
             if (!$isRelativeUrl) {
                 $mediaBaseUrl = $this->_storeManager->getStore()->getBaseUrl(
-                    \Magento\Framework\UrlInterface::URL_TYPE_MEDIA
+                    UrlInterface::URL_TYPE_MEDIA
                 );
                 $url = $mediaBaseUrl
                     . 'scoped_eav/entity/'
@@ -211,15 +202,18 @@ class AbstractEntity extends AbstractModel implements EntityInterface
      */
     public function getDefaultAttributes(): array
     {
-        return array_unique(array_merge($this->_getDefaultAttributes(), [$this->getEntityIdField(), $this->getLinkField()]));
+        return array_unique(
+            array_merge(
+                $this->_getDefaultAttributes(),
+                [$this->getEntityIdField(), $this->getLinkField()]
+            )
+        );
     }
 
     /**
      * Re-declare attribute model
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
-     * @return string
      */
     protected function _getDefaultAttributeModel(): string
     {
@@ -230,7 +224,6 @@ class AbstractEntity extends AbstractModel implements EntityInterface
      * Retrieve default entity attributes
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
      * @return string[]
      */
     protected function _getDefaultAttributes(): array

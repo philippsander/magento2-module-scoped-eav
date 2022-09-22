@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smile\ScopedEav\Block\Adminhtml;
 
+use Magento\Backend\Block\Widget\Button\SplitButton;
 use Magento\Backend\Block\Widget\Container;
 use Magento\Backend\Block\Widget\Context;
 use Magento\Eav\Model\Config;
@@ -14,10 +15,7 @@ use Magento\Framework\Api\SortOrder;
  */
 abstract class AbstractEntity extends Container
 {
-    /**
-     * @var Config
-     */
-    private $eavConfig;
+    private Config $eavConfig;
 
     /**
      * Constructor.
@@ -37,8 +35,6 @@ abstract class AbstractEntity extends Container
 
     /**
      * Check whether it is single store mode
-     *
-     * @return bool
      */
     public function isSingleStoreMode(): bool
     {
@@ -46,8 +42,7 @@ abstract class AbstractEntity extends Container
     }
 
     /**
-     * {@inheritDoc}
-     *
+     * @inheritdoc
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _prepareLayout()
@@ -57,7 +52,7 @@ abstract class AbstractEntity extends Container
             'label' => __('Add'),
             'class' => 'add',
             'button_class' => '',
-            'class_name' => 'Magento\Backend\Block\Widget\Button\SplitButton',
+            'class_name' => SplitButton::class,
             'options' => $this->getAddEntityButtonOptions(),
         ];
 
@@ -94,8 +89,6 @@ abstract class AbstractEntity extends Container
      * Retrieve entity create url by specified attribute set id.
      *
      * @param string|int $attributeSetId Attribute set id.
-     *
-     * @return string
      */
     protected function getEntityCreateUrl($attributeSetId): string
     {
@@ -104,8 +97,6 @@ abstract class AbstractEntity extends Container
 
     /**
      * Get current entity type code.
-     *
-     * @return string
      */
     abstract protected function getEntityTypeCode(): string;
 }

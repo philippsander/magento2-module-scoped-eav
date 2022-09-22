@@ -12,24 +12,18 @@ use Smile\ScopedEav\Model\Locator\LocatorInterface;
  */
 class System extends AbstractModifier
 {
-    const KEY_SUBMIT_URL = 'submit_url';
+    private const KEY_SUBMIT_URL = 'submit_url';
 
-    const KEY_RELOAD_URL = 'reloadUrl';
+    private const KEY_RELOAD_URL = 'reloadUrl';
 
-    /**
-     * @var LocatorInterface
-     */
-    private $locator;
+    private LocatorInterface $locator;
 
-    /**
-     * @var UrlInterface
-     */
-    private $urlBuilder;
+    private UrlInterface $urlBuilder;
 
     /**
      * @var array
      */
-    private $defaultEntityUrls = [
+    private array $defaultEntityUrls = [
         self::KEY_SUBMIT_URL => '*/*/save',
         self::KEY_RELOAD_URL => '*/*/reload',
     ];
@@ -37,7 +31,7 @@ class System extends AbstractModifier
     /**
      * @var array
      */
-    private $entityUrls;
+    private array $entityUrls;
 
     /**
      * Constructor.
@@ -57,7 +51,7 @@ class System extends AbstractModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function modifyData(array $data)
     {
@@ -67,16 +61,22 @@ class System extends AbstractModifier
         $parameters = ['id' => $model->getId(), 'store' => $model->getStoreId()];
 
         $actionParameters = array_merge($parameters, ['set' => $attributeSetId]);
-        $reloadParameters = array_merge($parameters, ['popup' => 1, 'componentJson' => 1, 'prev_set_id' => $attributeSetId]);
+        $reloadParameters = array_merge(
+            $parameters,
+            ['popup' => 1, 'componentJson' => 1, 'prev_set_id' => $attributeSetId]
+        );
 
         $submitUrl = $this->urlBuilder->getUrl($this->getEntityUrl(self::KEY_SUBMIT_URL), $actionParameters);
         $reloadUrl = $this->urlBuilder->getUrl($this->getEntityUrl(self::KEY_RELOAD_URL), $reloadParameters);
 
-        return array_replace_recursive($data, ['config' => [self::KEY_SUBMIT_URL => $submitUrl, self::KEY_RELOAD_URL => $reloadUrl]]);
+        return array_replace_recursive(
+            $data,
+            ['config' => [self::KEY_SUBMIT_URL => $submitUrl, self::KEY_RELOAD_URL => $reloadUrl]]
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function modifyMeta(array $meta)
     {
@@ -87,10 +87,8 @@ class System extends AbstractModifier
      * Return entity url by url type.
      *
      * @param string $urlType Url type.
-     *
-     * @return string
      */
-    private function getEntityUrl(string $urlType) : string
+    private function getEntityUrl(string $urlType): string
     {
         return (string) ($this->entityUrls[$urlType] ?? $this->defaultEntityUrls[$urlType]);
     }

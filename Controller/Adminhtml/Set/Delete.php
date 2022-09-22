@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Smile\ScopedEav\Controller\Adminhtml\Set;
 
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Smile\ScopedEav\Controller\Adminhtml\AbstractSet;
 
 /**
  * Scoped EAV entity attribute set admin delete controller.
  */
-class Delete extends AbstractSet
+class Delete extends AbstractSet implements HttpPostActionInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function execute()
     {
@@ -23,6 +24,7 @@ class Delete extends AbstractSet
             $this->messageManager->addErrorMessage(__('We can\'t delete this set right now.'));
         }
 
-        return $this->_redirect('*/*/index');
+        $resultRedirect = $this->resultRedirectFactory->create();
+        return $resultRedirect->setPath('*/*/index');
     }
 }

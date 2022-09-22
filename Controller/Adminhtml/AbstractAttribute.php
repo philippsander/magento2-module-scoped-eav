@@ -6,8 +6,9 @@ namespace Smile\ScopedEav\Controller\Adminhtml;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Backend\Model\View\Result\Page;
-use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Phrase;
 use Smile\ScopedEav\Api\Data\AttributeInterface;
 use Smile\ScopedEav\ViewModel\Data as DataViewModel;
@@ -17,15 +18,9 @@ use Smile\ScopedEav\ViewModel\Data as DataViewModel;
  */
 abstract class AbstractAttribute extends Action
 {
-    /**
-     * @var DataViewModel
-     */
-    private $dataViewModel;
-
-    /**
-     * @var Attribute\BuilderInterface
-     */
-    private $attributeBuilder;
+    private DataViewModel $dataViewModel;
+    private Attribute\BuilderInterface $attributeBuilder;
+    protected ForwardFactory $resultForwardFactory;
 
     /**
      * Constructor.
@@ -33,21 +28,22 @@ abstract class AbstractAttribute extends Action
      * @param Context $context Context.
      * @param DataViewModel $dataViewModel Scoped EAV data view model.
      * @param Attribute\BuilderInterface $attributeBuilder Attribute builder.
+     * @param ForwardFactory $resultForwardFactory Forward.
      */
     public function __construct(
         Context $context,
         DataViewModel $dataViewModel,
-        Attribute\BuilderInterface $attributeBuilder
+        Attribute\BuilderInterface $attributeBuilder,
+        ForwardFactory $resultForwardFactory
     ) {
         parent::__construct($context);
         $this->dataViewModel = $dataViewModel;
         $this->attributeBuilder = $attributeBuilder;
+        $this->resultForwardFactory = $resultForwardFactory;
     }
 
     /**
      * Return current attribute.
-     *
-     * @return AttributeInterface
      */
     protected function getAttribute(): AttributeInterface
     {
@@ -58,10 +54,8 @@ abstract class AbstractAttribute extends Action
      * Generate attribute code from label.
      *
      * @param string $label Attribute label.
-     *
-     * @return string
      */
-    protected function generateCode($label): string
+    protected function generateCode(string $label): string
     {
         return $this->dataViewModel->generateAttributeCodeFromLabel($label);
     }
@@ -70,8 +64,6 @@ abstract class AbstractAttribute extends Action
      * Create the page.
      *
      * @param Phrase|string $title Page title.
-     *
-     * @return Page
      */
     protected function createActionPage($title = null): Page
     {
@@ -92,13 +84,11 @@ abstract class AbstractAttribute extends Action
      * Redirect to index page on error.
      *
      * @param string $message Error message.
-     *
-     * @return ResponseInterface
      */
-    protected function getRedirectError(string $message): ResponseInterface
+    protected function getRedirectError(string $message): Redirect
     {
         $this->messageManager->addErrorMessage($message);
-
-        return $this->_redirect("*/*");
+        $resultRedirect = $this->resultRedirectFactory->create();
+        return $resultRedirect->setPath('*/*/');
     }
 }

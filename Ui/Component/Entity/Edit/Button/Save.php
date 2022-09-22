@@ -13,10 +13,7 @@ use Magento\Ui\Component\Control\Container;
  */
 class Save extends Generic
 {
-    /**
-     * @var string
-     */
-    private $formName;
+    private string $formName;
 
     /**
      * Constructor.
@@ -36,7 +33,7 @@ class Save extends Generic
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getButtonData()
     {
@@ -69,6 +66,7 @@ class Save extends Generic
      */
     protected function getOptions(): array
     {
+        $options = [];
         $options[] = [
             'id_hard' => 'save_and_new',
             'label' => __('Save & New'),
@@ -76,7 +74,11 @@ class Save extends Generic
                 'mage-init' => [
                     'buttonAdapter' => [
                         'actions' => [
-                            ['targetName' => $this->formName, 'actionName' => 'save', 'params' => [true, ['back' => 'new']]],
+                            [
+                                'targetName' => $this->formName,
+                                'actionName' => 'save',
+                                'params' => [true, ['back' => 'new']],
+                            ],
                         ],
                     ],
                 ],

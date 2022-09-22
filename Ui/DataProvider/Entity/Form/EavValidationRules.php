@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smile\ScopedEav\Ui\DataProvider\Entity\Form;
 
-use \Smile\ScopedEav\Api\Data\AttributeInterface;
+use Smile\ScopedEav\Api\Data\AttributeInterface;
 
 /**
  * Scoped EAV form validation rules.
@@ -16,14 +16,13 @@ class EavValidationRules
      *
      * @param AttributeInterface $attribute Attribute.
      * @param array $data Additional data.
-     *
      * @return array
      */
     public function build(AttributeInterface $attribute, array $data): array
     {
         $rules = [];
 
-        if (! empty($data['required'])) {
+        if (!empty($data['required'])) {
             $rules['required-entry'] = true;
         }
 
@@ -31,10 +30,12 @@ class EavValidationRules
 
         foreach ($validationClasses as $class) {
             if (preg_match('/^maximum-length-(\d+)$/', $class, $matches)) {
+                // @codingStandardsIgnoreLine
                 $rules = array_merge($rules, ['max_text_length' => $matches[1]]);
                 continue;
             }
             if (preg_match('/^minimum-length-(\d+)$/', $class, $matches)) {
+                // @codingStandardsIgnoreLine
                 $rules = array_merge($rules, ['min_text_length' => $matches[1]]);
                 continue;
             }
@@ -50,7 +51,6 @@ class EavValidationRules
      *
      * @param string $class Frontend class.
      * @param array  $rules Validation rules.
-     *
      * @return array
      */
     private function mapRules(string $class, array $rules): array

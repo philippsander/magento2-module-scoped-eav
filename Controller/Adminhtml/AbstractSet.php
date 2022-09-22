@@ -20,30 +20,15 @@ use Magento\Framework\Registry;
  */
 abstract class AbstractSet extends Action
 {
-    /**
-     * @var Registry
-     */
-    private $registry;
+    private Registry $registry;
 
-    /**
-     * @var AttributeSetRepositoryInterface
-     */
-    private $attributeSetRepository;
+    private AttributeSetRepositoryInterface $attributeSetRepository;
 
-    /**
-     * @var AttributeSetInterfaceFactory
-     */
-    private $attributeSetFactory;
+    private AttributeSetInterfaceFactory $attributeSetFactory;
 
-    /**
-     * @var Config
-     */
-    private $eavConfig;
+    private Config $eavConfig;
 
-    /**
-     * @var string
-     */
-    protected $entityTypeCode;
+    protected string $entityTypeCode;
 
     /**
      * Constructor.
@@ -85,8 +70,6 @@ abstract class AbstractSet extends Action
 
     /**
      * Return current type id.
-     *
-     * @return string
      */
     protected function getTypeId(): string
     {
@@ -101,8 +84,6 @@ abstract class AbstractSet extends Action
      * Create the page.
      *
      * @param Phrase|string $title Page title.
-     *
-     * @return Page
      */
     protected function createActionPage($title = null): Page
     {
@@ -119,8 +100,6 @@ abstract class AbstractSet extends Action
 
     /**
      * Get current attribute set.
-     *
-     * @return AttributeSetInterface
      */
     protected function getAttributeSet(): AttributeSetInterface
     {
@@ -129,8 +108,8 @@ abstract class AbstractSet extends Action
         if ($attributeSet == null) {
             $entityTypeId = $this->getTypeId();
             $attributeSet = $this->attributeSetFactory->create()->setEntityTypeId($entityTypeId);
-
-            if ($attributeSetId = $this->getRequest()->getParam('id')) {
+            $attributeSetId = $this->getRequest()->getParam('id');
+            if ($attributeSetId) {
                 $attributeSet = $this->attributeSetRepository->get($attributeSetId);
 
                 if ($attributeSet->getEntityTypeId() != $entityTypeId) {

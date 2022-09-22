@@ -12,14 +12,7 @@ namespace Smile\ScopedEav\Block\Adminhtml\Set;
 class Main extends \Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main
 {
     /**
-     * @var string
-     */
-    protected $_template = 'Magento_Catalog::catalog/product/attribute/set/main.phtml';
-
-    /**
      * Returns attribute set save URL.
-     *
-     * @return string
      */
     public function getMoveUrl(): string
     {
@@ -28,8 +21,6 @@ class Main extends \Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main
 
     /**
      * Returns attribute set delete URL.
-     *
-     * @return string
      */
     public function getDeleteUrl(): string
     {
@@ -37,18 +28,17 @@ class Main extends \Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main
     }
 
     /**
-     * {@inheritDoc}
-     *
+     * @inheritdoc
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _prepareLayout(): self
     {
-        $this->addChild('group_tree', 'Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main\Tree\Group');
-        $this->addChild('edit_set_form', 'Smile\ScopedEav\Block\Adminhtml\Set\Main\Formset');
+        $this->addChild('group_tree', Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main\Tree\Group::class);
+        $this->addChild('edit_set_form', Smile\ScopedEav\Block\Adminhtml\Set\Main\Formset::class);
 
         $this->addChild(
             'delete_group_button',
-            'Magento\Backend\Block\Widget\Button',
+            Magento\Backend\Block\Widget\Button::class,
             [
                 'label' => __('Delete Selected Group'),
                 'onclick' => 'editSet.submit();',
@@ -58,7 +48,7 @@ class Main extends \Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main
 
         $this->addChild(
             'add_group_button',
-            'Magento\Backend\Block\Widget\Button',
+            Magento\Backend\Block\Widget\Button::class,
             [
                 'label' => __('Add New'),
                 'onclick' => 'editSet.addGroup();',
@@ -68,7 +58,7 @@ class Main extends \Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main
 
         $this->getToolbar()->addChild(
             'back_button',
-            'Magento\Backend\Block\Widget\Button',
+            Magento\Backend\Block\Widget\Button::class,
             [
                 'label' => __('Back'),
                 'onclick' => 'setLocation(\'' . $this->getUrl('*/*/index') . '\')',
@@ -78,7 +68,7 @@ class Main extends \Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main
 
         $this->getToolbar()->addChild(
             'reset_button',
-            'Magento\Backend\Block\Widget\Button',
+            Magento\Backend\Block\Widget\Button::class,
             [
                 'label' => __('Reset'),
                 'onclick' => 'window.location.reload()',
@@ -86,14 +76,19 @@ class Main extends \Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main
             ]
         );
 
-        if (! $this->getIsCurrentSetDefault()) {
-            $deleteMessage = __('You are about to delete all products in this attribute set. ' . 'Are you sure you want to do that?');
+        if (!$this->getIsCurrentSetDefault()) {
+            $deleteMessage = __(
+                'You are about to delete all products in this attribute set. Are you sure you want to do that?'
+            );
             $this->getToolbar()->addChild(
                 'delete_button',
-                'Magento\Backend\Block\Widget\Button',
+                Magento\Backend\Block\Widget\Button::class,
                 [
                     'label'   => __('Delete'),
-                    'onclick' => 'deleteConfirm(\'' . $this->escapeJsQuote($deleteMessage) . '\', \'' . $this->getDeleteUrl() . '\')',
+                    'onclick' =>
+                        'deleteConfirm(\''
+                        . $this->escapeJsQuote($deleteMessage) . '\', \'' . $this->getDeleteUrl() .
+                        '\')',
                     'class' => 'delete',
                 ]
             );
@@ -101,7 +96,7 @@ class Main extends \Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main
 
         $this->getToolbar()->addChild(
             'save_button',
-            'Magento\Backend\Block\Widget\Button',
+            Magento\Backend\Block\Widget\Button::class,
             [
                 'label' => __('Save'),
                 'onclick' => 'editSet.save();',
@@ -111,7 +106,7 @@ class Main extends \Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main
 
         $this->addChild(
             'rename_button',
-            'Magento\Backend\Block\Widget\Button',
+            Magento\Backend\Block\Widget\Button::class,
             [
                 'label' => __('New Set Name'),
                 'onclick' => 'editSet.rename()',

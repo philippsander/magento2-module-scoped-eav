@@ -22,7 +22,7 @@ class Main extends AbstractMain
     /**
      * @var string[]
      */
-    private $disableScopeChangeList;
+    private array $disableScopeChangeList;
 
     /**
      * Constructor.
@@ -48,13 +48,21 @@ class Main extends AbstractMain
         array $disableScopeChangeList = [],
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $eavData, $yesnoFactory, $inputTypeFactory, $propertyLocker, $data);
+        parent::__construct(
+            $context,
+            $registry,
+            $formFactory,
+            $eavData,
+            $yesnoFactory,
+            $inputTypeFactory,
+            $propertyLocker,
+            $data
+        );
         $this->disableScopeChangeList = $disableScopeChangeList;
     }
 
     /**
-     * {@inheritDoc}
-     *
+     * @inheritdoc
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _prepareForm(): self

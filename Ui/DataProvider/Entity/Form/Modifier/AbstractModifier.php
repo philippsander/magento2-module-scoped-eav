@@ -11,30 +11,15 @@ use Magento\Ui\DataProvider\Modifier\ModifierInterface;
  */
 abstract class AbstractModifier implements ModifierInterface
 {
-    /**
-     * @var string
-     */
-    const DATA_SOURCE_DEFAULT = 'entity';
+    protected const DATA_SOURCE_DEFAULT = 'entity';
 
-    /**
-     * @var string
-     */
-    const DATA_SCOPE_ENTITY   = 'data.entity';
+    protected const DATA_SCOPE_ENTITY   = 'data.entity';
 
-    /**
-     * @var string
-     */
-    const CONTAINER_PREFIX = 'container_';
+    protected const CONTAINER_PREFIX = 'container_';
 
-    /**
-     * @var string
-     */
-    const META_CONFIG_PATH = 'arguments/data/config';
+    protected const META_CONFIG_PATH = 'arguments/data/config';
 
-    /**
-     * @var int
-     */
-    const SORT_ORDER_MULTIPLIER = 10;
+    protected const SORT_ORDER_MULTIPLIER = 10;
 
     /**
      * Retrieve next group sort order.
@@ -43,8 +28,6 @@ abstract class AbstractModifier implements ModifierInterface
      * @param array|string $groupCodes Preceding group codes.
      * @param int $defaultSortOrder Default sort order.
      * @param int $iteration Value to be added.
-     *
-     * @return int
      */
     protected function getNextGroupSortOrder(array $meta, $groupCodes, int $defaultSortOrder, int $iteration = 1): int
     {
@@ -66,15 +49,22 @@ abstract class AbstractModifier implements ModifierInterface
      * @param array|string $attributeCodes Preceding attribute codes.
      * @param int $defaultSortOrder Default sort order.
      * @param int $iteration Value to be added.
-     *
-     * @return int
      */
-    protected function getNextAttributeSortOrder(array $meta, $attributeCodes, int $defaultSortOrder, int $iteration = 1): int
-    {
+    protected function getNextAttributeSortOrder(
+        array $meta,
+        $attributeCodes,
+        int $defaultSortOrder,
+        int $iteration = 1
+    ): int {
         $attributeCodes = (array) $attributeCodes;
 
         foreach ($meta as $groupMeta) {
-            $defaultSortOrder = $this->getNextAttributeSortOrderInGroup($groupMeta, $attributeCodes, $defaultSortOrder, $iteration);
+            $defaultSortOrder = $this->getNextAttributeSortOrderInGroup(
+                $groupMeta,
+                $attributeCodes,
+                $defaultSortOrder,
+                $iteration
+            );
         }
 
         return $defaultSortOrder;
@@ -85,8 +75,6 @@ abstract class AbstractModifier implements ModifierInterface
      *
      * @param string $haystack Source string.
      * @param string $needle Searched string.
-     *
-     * @return bool
      */
     protected function startsWith(string $haystack, string $needle): bool
     {
@@ -97,8 +85,6 @@ abstract class AbstractModifier implements ModifierInterface
      * Retrieve first panel name.
      *
      * @param array $meta Meta.
-     *
-     * @return string|null
      */
     protected function getFirstPanelCode(array $meta): ?string
     {
@@ -122,13 +108,14 @@ abstract class AbstractModifier implements ModifierInterface
      *
      * @param array $meta Meta.
      * @param string $field Field.
-     *
      * @return string|bool
      */
     protected function getGroupCodeByField(array $meta, string $field): ?string
     {
         foreach ($meta as $groupCode => $groupData) {
-            if (isset($groupData['children'][$field]) || isset($groupData['children'][static::CONTAINER_PREFIX . $field])) {
+            if (isset($groupData['children'][$field])) {
+                return $groupCode;
+            } elseif (isset($groupData['children'][static::CONTAINER_PREFIX . $field])) {
                 return $groupCode;
             }
         }
@@ -143,11 +130,13 @@ abstract class AbstractModifier implements ModifierInterface
      * @param array $attributeCodes Preceding attribute codes.
      * @param int $defaultSortOrder Default sort order.
      * @param int $iteration Value to be added.
-     *
-     * @return mixed
      */
-    private function getNextAttributeSortOrderInGroup(array $meta, array $attributeCodes, int $defaultSortOrder, int $iteration = 1): mixed
-    {
+    private function getNextAttributeSortOrderInGroup(
+        array $meta,
+        array $attributeCodes,
+        int $defaultSortOrder,
+        int $iteration = 1
+    ): mixed {
         if (isset($meta['children'])) {
             foreach ($meta['children'] as $attributeCode => $attributeMeta) {
                 if ($this->startsWith($attributeCode, self::CONTAINER_PREFIX)) {
@@ -157,7 +146,10 @@ abstract class AbstractModifier implements ModifierInterface
                         $defaultSortOrder,
                         $iteration
                     );
-                } elseif (in_array($attributeCode, $attributeCodes) && isset($attributeMeta['arguments']['data']['config']['sortOrder'])) {
+                } elseif (
+                    in_array($attributeCode, $attributeCodes) &&
+                    isset($attributeMeta['arguments']['data']['config']['sortOrder'])
+                ) {
                     $defaultSortOrder = $attributeMeta['arguments']['data']['config']['sortOrder'] + $iteration;
                 }
             }

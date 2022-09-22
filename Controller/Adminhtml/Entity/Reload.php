@@ -4,26 +4,27 @@ declare(strict_types=1);
 
 namespace Smile\ScopedEav\Controller\Adminhtml\Entity;
 
-use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Smile\ScopedEav\Controller\Adminhtml\AbstractEntity;
 
 /**
  * Scoped EAV entity reload controller.
  */
-class Reload extends AbstractEntity
+class Reload extends AbstractEntity implements HttpGetActionInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function execute()
     {
         if (!$this->getRequest()->getParam('set')) {
-            return $this->resultFactory->create(ResultFactory::TYPE_FORWARD)->forward('noroute');
+            $resultForward = $this->resultForwardFactory->create();
+            return $resultForward->forward('noroute');
         }
 
         $this->getEntity();
 
-        $resultLayout = $this->resultFactory->create(ResultFactory::TYPE_LAYOUT);
+        $resultLayout = $this->resultLayoutFactory->create();
         $resultLayout->getLayout()->getUpdate()->removeHandle('default');
         $resultLayout->setHeader('Content-Type', 'application/json', true);
 

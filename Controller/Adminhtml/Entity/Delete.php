@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Smile\ScopedEav\Controller\Adminhtml\Entity;
 
-use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ScopedEav\Controller\Adminhtml\AbstractEntity;
 
 /**
  * Scoped EAV entity delete controller.
  */
-class Delete extends AbstractEntity
+class Delete extends AbstractEntity implements HttpPostActionInterface
 {
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function execute()
     {
@@ -35,6 +36,7 @@ class Delete extends AbstractEntity
             $this->messageManager->addExceptionMessage($e, __('Can not delete entity.'));
         }
 
-        return $this->_redirect("*/*/");
+        $resultRedirect = $this->resultRedirectFactory->create();
+        return $resultRedirect->setPath('*/*/');
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smile\ScopedEav\Controller\Adminhtml\Attribute;
 
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
@@ -15,22 +16,13 @@ use Smile\ScopedEav\ViewModel\Data as DataViewModel;
 /**
  * Scoped EAV entity attribute validation controller.
  */
-class Validate extends AbstractAttribute
+class Validate extends AbstractAttribute implements HttpPostActionInterface
 {
-    /**
-     * @var string
-     */
-    const DEFAULT_MESSAGE_KEY = 'message';
+    private const DEFAULT_MESSAGE_KEY = 'message';
 
-    /**
-     * @var JsonFactory
-     */
-    private $resultJsonFactory;
+    private JsonFactory $resultJsonFactory;
 
-    /**
-     * @var DataObjectFactory
-     */
-    private $dataObjectFactory;
+    private DataObjectFactory $dataObjectFactory;
 
     /**
      * Constructor.
@@ -54,7 +46,7 @@ class Validate extends AbstractAttribute
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function execute()
     {
@@ -71,8 +63,6 @@ class Validate extends AbstractAttribute
      *
      * @param DataObject $response Original response object.
      * @param string[]   $messages Messages.
-     *
-     * @return DataObject
      */
     private function setMessageToResponse(DataObject $response, array $messages): DataObject
     {
@@ -88,8 +78,6 @@ class Validate extends AbstractAttribute
      * Check an attribute with the same code does not exists yet.
      *
      * @param DataObject $response Response.
-     *
-     * @return DataObject
      */
     private function checkAttributeCode(DataObject $response): DataObject
     {
