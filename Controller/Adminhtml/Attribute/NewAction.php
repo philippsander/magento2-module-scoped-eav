@@ -12,10 +12,11 @@ use Smile\ScopedEav\Controller\Adminhtml\AbstractAttribute;
 class NewAction extends AbstractAttribute
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function execute()
     {
-        return $this->_forward("edit");
+        $resultForward = $this->resultForwardFactory->create();
+        return $resultForward->forward('edit');
     }
 }
