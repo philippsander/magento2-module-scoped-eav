@@ -169,9 +169,9 @@ class SchemaSetup
      *
      * @param string $entityTableName Entity table name.
      *
-     * @return $this
+     * @return Table|null
      */
-    public function getEntityWebsiteTable(string $entityTableName): self
+    public function getEntityWebsiteTable(string $entityTableName): ?Table
     {
         $websiteTableName = sprintf('%s_website', $entityTableName);
 
