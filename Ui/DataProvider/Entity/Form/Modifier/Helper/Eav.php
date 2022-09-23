@@ -17,6 +17,8 @@ use Smile\ScopedEav\ViewModel\Data as DataViewModel;
 
 /**
  * Scoped EAV form modifier EAV helper.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Eav
 {

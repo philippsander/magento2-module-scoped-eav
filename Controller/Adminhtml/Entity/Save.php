@@ -6,6 +6,7 @@ namespace Smile\ScopedEav\Controller\Adminhtml\Entity;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Eav\Model\Config;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\StoreManagerInterface;
@@ -16,7 +17,7 @@ use Smile\ScopedEav\Model\Entity\Attribute\Backend\Image;
 /**
  * Scoped EAV entity save controller.
  */
-class Save extends AbstractEntity
+class Save extends AbstractEntity implements HttpPostActionInterface
 {
     private DataPersistorInterface $dataPersistor;
 

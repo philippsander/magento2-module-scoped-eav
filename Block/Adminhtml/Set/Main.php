@@ -14,7 +14,10 @@ use Smile\ScopedEav\Block\Adminhtml\Set\Main\Formset;
  */
 class Main extends \Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main
 {
-    protected string $_template = 'Magento_Catalog::catalog/product/attribute/set/main.phtml';
+    /**
+     * @inheritDoc
+     */
+    protected $_template = 'Magento_Catalog::catalog/product/attribute/set/main.phtml';
 
     /**
      * Returns attribute set save URL.

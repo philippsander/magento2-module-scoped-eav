@@ -15,11 +15,20 @@ use Magento\Framework\Registry;
  */
 class Edit extends Container
 {
-    protected string $_blockGroup = 'Smile_ScopedEav';
+    /**
+     * @inheritDoc
+     */
+    protected $_blockGroup = 'Smile_ScopedEav';
 
-    protected string $_objectId   = 'attribute_id';
+    /**
+     * @inheritDoc
+     */
+    protected $_objectId   = 'attribute_id';
 
-    protected string $_controller = 'adminhtml_attribute';
+    /**
+     * @inheritDoc
+     */
+    protected $_controller = 'adminhtml_attribute';
 
     /**
      * Core registry

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smile\ScopedEav\Controller\Adminhtml\Attribute;
 
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
@@ -15,7 +16,7 @@ use Smile\ScopedEav\ViewModel\Data as DataViewModel;
 /**
  * Scoped EAV entity attribute validation controller.
  */
-class Validate extends AbstractAttribute
+class Validate extends AbstractAttribute implements HttpGetActionInterface
 {
     private const DEFAULT_MESSAGE_KEY = 'message';
 

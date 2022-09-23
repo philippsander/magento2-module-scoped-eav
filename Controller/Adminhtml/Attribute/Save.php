@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smile\ScopedEav\Controller\Adminhtml\Attribute;
 
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\FormData;
@@ -17,7 +18,7 @@ use Zend\Validator\RegexFactory;
 /**
  * Scoped EAV entity attribute save controller.
  */
-class Save extends AbstractAttribute
+class Save extends AbstractAttribute implements HttpPostActionInterface
 {
     private DataViewModel $dataViewModel;
 

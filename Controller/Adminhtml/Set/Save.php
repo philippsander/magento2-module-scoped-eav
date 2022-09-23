@@ -9,6 +9,7 @@ use Magento\Eav\Api\AttributeSetRepositoryInterface;
 use Magento\Eav\Api\Data\AttributeSetInterface;
 use Magento\Eav\Api\Data\AttributeSetInterfaceFactory;
 use Magento\Eav\Model\Config;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\Result\Redirect;
@@ -20,8 +21,10 @@ use Smile\ScopedEav\Controller\Adminhtml\AbstractSet;
 
 /**
  * Scoped EAV entity attribute set admin save controller.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Save extends AbstractSet
+class Save extends AbstractSet implements HttpPostActionInterface
 {
     private FilterManager $filterManager;
 

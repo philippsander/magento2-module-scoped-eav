@@ -22,9 +22,9 @@ class AbstractEntity extends AbstractModel implements EntityInterface
     protected const STORE_ID = 'store_id';
 
     /**
-     * Name of object id field
+     * @inheritDoc
      */
-    protected string $_idFieldName = 'entity_id';
+    protected $_idFieldName = 'entity_id';
 
     /**
      * @inheritDoc
